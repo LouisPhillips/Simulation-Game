@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Drink
   - Food
+  - Sleep
+  - Entertainment
   layers:
   - Default
   - TransparentFX
