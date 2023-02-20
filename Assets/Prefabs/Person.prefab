@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 3271726351500533553}
   - component: {fileID: 3271726351500533552}
   - component: {fileID: 3271726351500533555}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Person
-  m_TagString: Untagged
+  m_TagString: AI
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -32,7 +32,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 4.51, y: -3.59, z: -5.09}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1871566559681137412}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -150,21 +151,105 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e9b8cc74cd163f46ad9a788069b0ec5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 0
+  timeScale: 0
   hunger: 0
   thirst: 0
   tiredness: 0
-  maxHealth: 0
+  entertainment: 0
   maxHunger: 0
   maxThirst: 0
   maxTiredness: 0
-  satisfiedHealth: 0
+  maxEntertained: 0
   satisfiedHunger: 0
   satisfiedThirst: 0
   satisfiedTiredness: 0
+  satisfiedEntertainment: 0
+  criticalHunger: 0
+  criticalThirst: 0
+  criticalTiredness: 0
+  criticalEntertainment: 0
   rb: {fileID: 0}
   navigation: {fileID: 0}
-  drinkingLocations: []
-  foodLocations: []
-  sleepLocations: []
+  jobStartTime: 0
+  jobFinishTime: 0
+  paidPerHour: 0
+  jobTitle: 
+  employment: 0
   state: 0
+  gender: 0
+  age: 0
+  canMakeDecision: 1
+--- !u!1 &6397327698856325245
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1871566559681137412}
+  - component: {fileID: 6744018668357605416}
+  m_Layer: 5
+  m_Name: Camera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1871566559681137412
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6397327698856325245}
+  m_LocalRotation: {x: -0, y: -1, z: -0, w: 0.0000029504295}
+  m_LocalPosition: {x: 0, y: 0, z: 1.95}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3271726351500533557}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
+--- !u!20 &6744018668357605416
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6397327698856325245}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_FocalLength: 50
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 32
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 8400000, guid: d0f3705931df430408283070461ef180, type: 2}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022

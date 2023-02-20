@@ -8,16 +8,20 @@ public class ChangeValue : MonoBehaviour
     public Slider slider;
     public enum State { Hunger, Thrist, Entertainment, Sleep};
     public State state;
-    public GameObject AI;
-    private Person person;
+    public Person person;
+    public SelectedPerson selectedPerson;
 
     private void Start()
     {
         slider = GetComponent<Slider>();
-        person = AI.GetComponent<Person>();
+
+       
     }
     public void ChangeSliderValue()
     {
+        selectedPerson = GameObject.FindGameObjectWithTag("GameController").GetComponent<SelectedPerson>();
+        person = selectedPerson.selectedAI;
+
         switch (state)
         {
             case State.Hunger:

@@ -10,14 +10,18 @@ public class Person : BasePerson
         maxTiredness = 100;
         maxHunger = 100;
         maxThirst = 100;
-        maxHealth = 250;
         maxEntertained = 100;
 
         satisfiedTiredness = 80;
         satisfiedHunger = 75;
         satisfiedThirst = 75;
-        satisfiedHealth = 100;
         satisfiedEntertainment = 75;
+
+        criticalTiredness = 30;
+        criticalHunger = 25;
+        criticalThirst = 25;
+        criticalEntertainment = 20;
+
         base.Start();
     }
 

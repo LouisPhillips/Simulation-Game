@@ -7,7 +7,6 @@ public class BasePerson : MonoBehaviour
 {
     public float timeScale = 0f;
     [Header("Needs")]
-    public float health;
     public float hunger;
     public float thirst;
     public float tiredness;
@@ -15,7 +14,6 @@ public class BasePerson : MonoBehaviour
 
     [Space(10)]
     [Header("Max Needs")]
-    public float maxHealth;
     public float maxHunger;
     public float maxThirst;
     public float maxTiredness;
@@ -23,27 +21,47 @@ public class BasePerson : MonoBehaviour
 
     [Space(10)]
     [Header("Satisfied Values")]
-    public float satisfiedHealth;
     public float satisfiedHunger;
     public float satisfiedThirst;
     public float satisfiedTiredness;
     public float satisfiedEntertainment;
 
     [Space(10)]
+    [Header("Critical Values")]
+    public float criticalHunger;
+    public float criticalThirst;
+    public float criticalTiredness;
+    public float criticalEntertainment;
+
+    [Space(10)]
     [Header("Components")]
     public Rigidbody rb;
     public NavMeshAgent navigation;
+    private GameObject gameManager;
+    private GlobalLocations gl;
+    private TimeScaler ts;
 
     [Space(10)]
-    [Header("Findings")]
-    public List<GameObject> drinkingLocations;
-    public List<GameObject> foodLocations;
-    public List<GameObject> sleepLocations;
-    public List<GameObject> entertainmentLocations;
+    [Header("Job Info")]
+    public float jobStartTime;
+    public float jobFinishTime;
+    public float paidPerHour;
+    public string jobTitle;
+    public enum Employment { Unemployed, Employed };
+    public Employment employment;
+
+    public enum State { Idle, FindFood, FindDrink, FindSleep, FindEntertainment, Wander, Eating, Drinking, Sleeping, Entertaining, GoToWork, Work };
+    public State state;
+
+    public enum Gender { Male, Female };
+    public Gender gender;
+
+    public enum Age { Child, Teenager, Young_Adult, Adult, Elder }
+    public Age age;
+
+    public Transform destination;
 
     protected float decayValue = 0.5f;
-    public enum State { Idle, FindFood, FindDrink, FindSleep, FindEntertainment, Wander, Eating, Drinking, Sleeping, Entertaining };
-    public State state;
 
     protected float wanderDelay = 0f;
     protected float wanderEvery = 5f;
@@ -56,46 +74,29 @@ public class BasePerson : MonoBehaviour
 
     protected bool awake = true;
     protected bool decisionMade = false;
+
+    protected bool getAgeDay = true;
+    protected int agedDay = 0;
+    [SerializeField] protected bool canMakeDecision = true;
     public virtual void Start()
     {
         rb = GetComponent<Rigidbody>();
         navigation = GetComponent<NavMeshAgent>();
 
-        drinkingLocations = new List<GameObject>();
-        foodLocations = new List<GameObject>();
-        sleepLocations = new List<GameObject>();
-
-        GameObject[] drinks = GameObject.FindGameObjectsWithTag("Drink");
-        for (int i = 0; i < drinks.Length; i++)
-        {
-            drinkingLocations.Add(drinks[i]);
-        }
-
-        GameObject[] food = GameObject.FindGameObjectsWithTag("Food");
-        for (int i = 0; i < food.Length; i++)
-        {
-            foodLocations.Add(food[i]);
-        }
-
-        GameObject[] sleep = GameObject.FindGameObjectsWithTag("Sleep");
-        for (int i = 0; i < sleep.Length; i++)
-        {
-            sleepLocations.Add(sleep[i]);
-        }
-
-        GameObject[] entertainmentObj = GameObject.FindGameObjectsWithTag("Entertainment");
-        for (int i = 0; i < entertainmentObj.Length; i++)
-        {
-            entertainmentLocations.Add(entertainmentObj[i]);
-        }
-
         state = State.Wander;
+        gender = Random.value < 0.5f ? Gender.Male : Gender.Female;
+        employment = Employment.Unemployed;
+        age = Age.Young_Adult;
 
-        health = maxHealth;
         hunger = maxHunger;
         thirst = maxThirst;
         tiredness = maxTiredness;
         entertainment = maxEntertained;
+
+        gameManager = GameObject.FindGameObjectWithTag("GameController");
+        gl = gameManager.GetComponent<GlobalLocations>();
+        ts = gameManager.GetComponent<TimeScaler>();
+
     }
 
 
@@ -107,22 +108,25 @@ public class BasePerson : MonoBehaviour
                 Idle();
                 break;
             case State.FindDrink:
-                GoTo(drinkingLocations, 7);
+                GoTo(gl.drinkingLocations, 7);
                 break;
             case State.FindFood:
-                GoTo(foodLocations, 6);
+                GoTo(gl.foodLocations, 6);
                 break;
             case State.FindSleep:
-                GoTo(sleepLocations, 8);
+                GoTo(gl.sleepLocations, 8);
                 break;
             case State.FindEntertainment:
-                GoTo(entertainmentLocations, 9);
+                GoTo(gl.entertainmentLocations, 9);
+                break;
+            case State.GoToWork:
+                GoTo(gl.doorLocation, 11);
                 break;
             case State.Wander:
                 Wander();
                 break;
             case State.Eating:
-                Eat(GetClosest(foodLocations).GetComponent<FoodBites>());
+                Eat(GetClosest(gl.foodLocations).GetComponent<FoodBites>());
                 break;
             case State.Drinking:
                 Drink();
@@ -132,6 +136,9 @@ public class BasePerson : MonoBehaviour
                 break;
             case State.Entertaining:
                 Entertain();
+                break;
+            case State.Work:
+                Work();
                 break;
 
         }
@@ -144,11 +151,20 @@ public class BasePerson : MonoBehaviour
             awake = true;
         }
 
-        Decision();
+        if (canMakeDecision)
+        {
+            Decision();
+        }
+
 
         DeteriateHunger();
         DeteriateThirst();
         DeteriateEntertainment();
+
+        CheckDeath();
+
+        AgePerson();
+
     }
 
     public void Decision()
@@ -157,28 +173,38 @@ public class BasePerson : MonoBehaviour
         bool currentlyDrinking = state == State.FindDrink;
         bool currentlySleeping = state == State.FindSleep;
         bool currentlyEntertaining = state == State.FindEntertainment;
+        bool currentlyWorking = state == State.Work;
 
         if (!decisionMade)
         {
-            if (tiredness > maxTiredness % 3 && !currentlySleeping)
+            if (tiredness > maxTiredness / 3 && !currentlySleeping)
             {
-                if (satisfiedHunger > hunger && !currentlyEating)
+                if (jobStartTime == ts.hour && !currentlyWorking || ts.hour == jobStartTime + 1)
                 {
-                    if (foodLocations.Count > 0)
+                    if (employment == Employment.Employed)
+                    {
+                        canMakeDecision = false;
+                        state = State.GoToWork;
+
+                    }
+                }
+                else if (satisfiedHunger > hunger && !currentlyEating || hunger < criticalHunger)
+                {
+                    if (gl.foodLocations.Count > 0)
                     {
                         state = State.FindFood;
                     }
                 }
-                else if (satisfiedThirst > thirst && !currentlyDrinking)
+                else if (satisfiedThirst > thirst && !currentlyDrinking || thirst < criticalThirst)
                 {
-                    if (drinkingLocations.Count > 0)
+                    if (gl.drinkingLocations.Count > 0)
                     {
                         state = State.FindDrink;
                     }
                 }
                 else if (satisfiedEntertainment > entertainment && !currentlyEntertaining)
                 {
-                    if (entertainmentLocations.Count > 0)
+                    if (gl.entertainmentLocations.Count > 0)
                     {
                         state = State.FindEntertainment;
                     }
@@ -251,7 +277,7 @@ public class BasePerson : MonoBehaviour
 
     public void Entertain()
     {
-        entertainment += 1.5f * Time.deltaTime;
+        entertainment += 3f * Time.deltaTime;
 
         if (entertainment > satisfiedEntertainment)
         {
@@ -262,11 +288,29 @@ public class BasePerson : MonoBehaviour
     public void Sleep()
     {
         awake = false;
-        tiredness += 2f * Time.deltaTime;
+        tiredness += 1f * Time.deltaTime;
 
         if (tiredness > satisfiedTiredness)
         {
             state = State.Wander;
+        }
+    }
+
+    public void Work()
+    {
+        // finished work
+        if (jobFinishTime <= ts.hour)
+        {
+            GlobalValues.money = GlobalValues.money + ((jobFinishTime - jobStartTime) * paidPerHour);
+            state = State.Wander;
+            canMakeDecision = true;
+        }
+
+        // lunch break
+        if (ts.hour == jobStartTime + ((jobFinishTime - jobStartTime) / 2))
+        {
+            thirst += 30;
+            hunger += 30;
         }
     }
 
@@ -291,26 +335,64 @@ public class BasePerson : MonoBehaviour
 
     public void DeteriateSleep()
     {
-        //tiredness = Mathf.Lerp(maxTiredness, 0, Time.time * 0.01f);
-        tiredness -= decayValue / 2 * Time.deltaTime;
+        // 2.75f take away brackets - for some reason broke game loop
+        tiredness -= (decayValue / 1.25f) * Time.deltaTime;
+        if (tiredness < 0)
+        {
+            tiredness = 0;
+        }
     }
 
     public void DeteriateHunger()
     {
-        //hunger = Mathf.Lerp(maxHunger, 0, Time.time * 0.01f);
         hunger -= (decayValue / 1.5f) * Time.deltaTime;
     }
 
     public void DeteriateThirst()
     {
-        //thirst = Mathf.Lerp(maxThirst, 0, Time.time * 0.01f);
-        thirst -= decayValue  * Time.deltaTime;
+        thirst -= decayValue * Time.deltaTime;
     }
 
     public void DeteriateEntertainment()
     {
         entertainment -= decayValue * Time.deltaTime;
+        if (entertainment < 0)
+        {
+            entertainment = 0;
+        }
     }
+
+    public void AgePerson()
+    {
+        if (getAgeDay)
+        {
+            agedDay = ts.day;
+            getAgeDay = false;
+        }
+        if (ts.day == agedDay + 14)
+        {
+            age = age + 1;
+            getAgeDay = true;
+        }
+
+
+    }
+
+    public void CheckDeath()
+    {
+        if (hunger < 0 || thirst < 0)
+        {
+            Death();
+        }
+    }
+
+    public void Death()
+    {
+        Destroy(gameObject);
+
+        // will cause issues with selected AI
+    }
+
     Vector3 RandomSphere(Vector3 start, float range)
     {
         Vector3 randomPoint = Random.insideUnitSphere * range;
@@ -328,15 +410,16 @@ public class BasePerson : MonoBehaviour
     {
         float closestDistance = Mathf.Infinity;
         Transform trns = null;
-         
-        foreach (GameObject enemy in gameObject)
+
+        foreach (GameObject obj in gameObject)
         {
             float currentDistance;
-            currentDistance = Vector3.Distance(transform.position, enemy.transform.position);
+            currentDistance = Vector3.Distance(transform.position, obj.transform.position);
             if (currentDistance < closestDistance)
             {
                 closestDistance = currentDistance;
-                trns = enemy.transform;
+                trns = obj.transform;
+                destination = trns;
             }
         }
         return trns;
@@ -344,7 +427,6 @@ public class BasePerson : MonoBehaviour
 
     IEnumerator FoodDelay(FoodBites food)
     {
-        Debug.Log("Delay");
         yield return new WaitForSeconds(1);
         food.bites -= 1;
         hunger += food.foodValue;

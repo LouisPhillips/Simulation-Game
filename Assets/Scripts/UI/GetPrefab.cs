@@ -1,22 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEditor.AI;
 public class GetPrefab : MonoBehaviour
 {
     public GameObject prefab;
     public float cost;
 
     private GameObject currentPlaceable;
-
+    private Vector3 gridSize;
     private bool clicked = false;
     private float mouseWheelRotation;
+
+    private void Awake()
+    {
+        gridSize = new Vector3(1, 1, 1);
+    }
     public void CheckPrice()
     {
-        if (cost < GobalValues.money)
+        if (cost <= GlobalValues.money)
         {
             Debug.Log("can buy");
-            Instantiate(prefab, Input.mousePosition, prefab.transform.rotation);
             clicked = true;
         }
         else
@@ -50,7 +54,7 @@ public class GetPrefab : MonoBehaviour
     {
         if (PressedPrefab())
         {
-            Destroy(currentPlaceable);
+            //Destroy(currentPlaceable);
         }
         else
         {
@@ -70,6 +74,11 @@ public class GetPrefab : MonoBehaviour
         if (Physics.Raycast(ray, out hit))
         {
             currentPlaceable.transform.position = hit.point;
+            Vector3 pos = currentPlaceable.transform.position;
+            pos.x = Mathf.RoundToInt(pos.x / gridSize.x) * gridSize.x;
+            pos.y = Mathf.RoundToInt(pos.y / gridSize.y) * gridSize.y;
+            pos.z = Mathf.RoundToInt(pos.z / gridSize.z) * gridSize.z;
+            currentPlaceable.transform.position = pos;
             currentPlaceable.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
         }
     }
@@ -86,6 +95,8 @@ public class GetPrefab : MonoBehaviour
         {
             currentPlaceable = null;
             clicked = false;
+            GlobalValues.money -= cost;
+            NavMeshBuilder.BuildNavMesh();
         }
     }
 }

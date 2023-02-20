@@ -9,6 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5044265477994921662}
+  - component: {fileID: 4257856846890062663}
+  - component: {fileID: 7151262064501940417}
   m_Layer: 0
   m_Name: Location
   m_TagString: Drink
@@ -30,6 +32,32 @@ Transform:
   m_Father: {fileID: 1807532289863432575}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4257856846890062663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013824387177857340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9c0d1c1cc8db3a46b2285a439de371b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7151262064501940417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013824387177857340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db9fc2f0f05e75f4eb48a0d567ab0a36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  occupiedSlot: {fileID: 0}
+  AIs: []
 --- !u!1 &1389420095959950691
 GameObject:
   m_ObjectHideFlags: 0

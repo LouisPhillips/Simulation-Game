@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2310602843164196870}
   - component: {fileID: 995921747554209426}
+  - component: {fileID: 5238008115878700349}
+  - component: {fileID: 1503339768263614520}
   m_Layer: 0
   m_Name: Location
   m_TagString: Food
@@ -45,6 +47,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bites: 3
   foodValue: 20
+--- !u!114 &5238008115878700349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7054911184545235286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9c0d1c1cc8db3a46b2285a439de371b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1503339768263614520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7054911184545235286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db9fc2f0f05e75f4eb48a0d567ab0a36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  occupiedSlot: {fileID: 0}
+  AIs: []
 --- !u!1 &8861965144362945412
 GameObject:
   m_ObjectHideFlags: 0
