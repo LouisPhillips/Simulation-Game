@@ -50,7 +50,14 @@ public class BasePerson : MonoBehaviour
     public enum Employment { Unemployed, Employed };
     public Employment employment;
 
-    public enum State { Idle, FindFood, FindDrink, FindSleep, FindEntertainment, Wander, Eating, Drinking, Sleeping, Entertaining, GoToWork, Work };
+
+    [Space(10)]
+    [Header("Social")]
+    public List<GameObject> friends;
+    public List<float> friendScore;
+    public GameObject socializingWith;
+
+    public enum State { Idle, FindFood, FindDrink, FindSleep, FindEntertainment, Wander, Eating, Drinking, Sleeping, Entertaining, GoToWork, Work, GoBeSocial, Socialize };
     public State state;
 
     public enum Gender { Male, Female };
@@ -78,6 +85,8 @@ public class BasePerson : MonoBehaviour
     protected bool getAgeDay = true;
     protected int agedDay = 0;
     [SerializeField] protected bool canMakeDecision = true;
+
+    public List<State> queueState;
     public virtual void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -97,6 +106,14 @@ public class BasePerson : MonoBehaviour
         gl = gameManager.GetComponent<GlobalLocations>();
         ts = gameManager.GetComponent<TimeScaler>();
 
+        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("AI"))
+        {
+            friends.Add(obj);
+            friendScore.Add(GameObject.FindGameObjectsWithTag("AI").Length - 1);
+            friends.Remove(gameObject);
+        }
+
+        queueState.Add(State.Wander);
     }
 
 
@@ -140,6 +157,12 @@ public class BasePerson : MonoBehaviour
             case State.Work:
                 Work();
                 break;
+            case State.GoBeSocial:
+                FindDesiredFriend();
+                break;
+            case State.Socialize:
+                Socialize();
+                break;
 
         }
         if (awake)
@@ -169,6 +192,8 @@ public class BasePerson : MonoBehaviour
 
     public void Decision()
     {
+        //state = queueState[0];
+
         bool currentlyEating = state == State.FindFood;
         bool currentlyDrinking = state == State.FindDrink;
         bool currentlySleeping = state == State.FindSleep;
@@ -185,6 +210,7 @@ public class BasePerson : MonoBehaviour
                     {
                         canMakeDecision = false;
                         state = State.GoToWork;
+                        //queueState.Add(State.GoToWork);
 
                     }
                 }
@@ -192,6 +218,7 @@ public class BasePerson : MonoBehaviour
                 {
                     if (gl.foodLocations.Count > 0)
                     {
+                        //queueState.Add(State.FindFood);
                         state = State.FindFood;
                     }
                 }
@@ -199,6 +226,7 @@ public class BasePerson : MonoBehaviour
                 {
                     if (gl.drinkingLocations.Count > 0)
                     {
+                        //queueState.Add(State.FindDrink);
                         state = State.FindDrink;
                     }
                 }
@@ -206,12 +234,14 @@ public class BasePerson : MonoBehaviour
                 {
                     if (gl.entertainmentLocations.Count > 0)
                     {
+                        //queueState.Add(State.FindEntertainment);
                         state = State.FindEntertainment;
                     }
                 }
             }
             else
             {
+                //queueState.Add(State.FindSleep);
                 state = State.FindSleep;
             }
         }
@@ -230,6 +260,8 @@ public class BasePerson : MonoBehaviour
             if (Vector3.Distance(transform.position, navigation.destination) == 1f)
             {
                 state = (State)desiredState;
+                queueState.RemoveAt(0);
+                queueState.Add((State)desiredState);
             }
         }
     }
@@ -250,6 +282,7 @@ public class BasePerson : MonoBehaviour
 
         if (hunger > satisfiedHunger)
         {
+            //queueState.RemoveAt(0);
             state = State.Wander;
         }
 
@@ -272,6 +305,7 @@ public class BasePerson : MonoBehaviour
         if (thirst > satisfiedThirst)
         {
             state = State.Wander;
+            //queueState.RemoveAt(0);
         }
     }
 
@@ -281,6 +315,7 @@ public class BasePerson : MonoBehaviour
 
         if (entertainment > satisfiedEntertainment)
         {
+            //queueState.RemoveAt(0);
             state = State.Wander;
         }
     }
@@ -292,6 +327,7 @@ public class BasePerson : MonoBehaviour
 
         if (tiredness > satisfiedTiredness)
         {
+            //queueState.RemoveAt(0);
             state = State.Wander;
         }
     }
@@ -303,6 +339,7 @@ public class BasePerson : MonoBehaviour
         {
             GlobalValues.money = GlobalValues.money + ((jobFinishTime - jobStartTime) * paidPerHour);
             state = State.Wander;
+            //queueState.RemoveAt(0);
             canMakeDecision = true;
         }
 
@@ -311,6 +348,25 @@ public class BasePerson : MonoBehaviour
         {
             thirst += 30;
             hunger += 30;
+        }
+    }
+
+    public void Socialize()
+    {
+
+    }
+
+    public void FindDesiredFriend()
+    {
+        var max = friendScore[0];
+        for (int i = 1; i < friendScore.Count; i++)
+        {
+            if (friendScore[i] > max)
+            {
+                max = friendScore[i];
+                socializingWith = friends[i];
+                Debug.Log(friends[i]);
+            }
         }
     }
 
