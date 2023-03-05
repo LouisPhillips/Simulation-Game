@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5044265477994921662}
   - component: {fileID: 4257856846890062663}
   - component: {fileID: 7151262064501940417}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Location
   m_TagString: Drink
   m_Icon: {fileID: 0}
@@ -56,8 +56,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db9fc2f0f05e75f4eb48a0d567ab0a36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxUsers: 1
+  currentUsers: 0
   occupiedSlot: {fileID: 0}
   AIs: []
+  type: 0
 --- !u!1 &1389420095959950691
 GameObject:
   m_ObjectHideFlags: 0
@@ -67,9 +70,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2363948672415366073}
-  m_Layer: 0
+  - component: {fileID: 1438352571251717282}
+  m_Layer: 3
   m_Name: Sink
-  m_TagString: Untagged
+  m_TagString: Selectable/Object
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -89,6 +93,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1438352571251717282
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1389420095959950691}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.12, y: 1.6, z: 4.67}
+  m_Center: {x: 0, y: 0.83, z: 0}
 --- !u!1001 &1809199066548584721
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -99,6 +116,14 @@ PrefabInstance:
     - target: {fileID: 1000012595975274, guid: 928ab05920c2fc44dafb3573d1b5fbc1, type: 3}
       propertyPath: m_Name
       value: Sink.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000012595975274, guid: 928ab05920c2fc44dafb3573d1b5fbc1, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000012595975274, guid: 928ab05920c2fc44dafb3573d1b5fbc1, type: 3}
+      propertyPath: m_TagString
+      value: Placeable
       objectReference: {fileID: 0}
     - target: {fileID: 1000012595975274, guid: 928ab05920c2fc44dafb3573d1b5fbc1, type: 3}
       propertyPath: m_NavMeshLayer

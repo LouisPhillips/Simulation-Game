@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6132444487019124911}
   - component: {fileID: 8554246524229810147}
   - component: {fileID: 3945465969695849650}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Location (1)
   m_TagString: Entertainment
   m_Icon: {fileID: 0}
@@ -56,8 +56,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db9fc2f0f05e75f4eb48a0d567ab0a36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxUsers: 1
+  currentUsers: 0
   occupiedSlot: {fileID: 0}
   AIs: []
+  type: 3
 --- !u!1 &4614532748576334398
 GameObject:
   m_ObjectHideFlags: 0
@@ -69,7 +72,7 @@ GameObject:
   - component: {fileID: 5837359759968179792}
   - component: {fileID: 4479098706315933771}
   - component: {fileID: 7571898663405991561}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Location
   m_TagString: Entertainment
   m_Icon: {fileID: 0}
@@ -114,8 +117,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db9fc2f0f05e75f4eb48a0d567ab0a36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxUsers: 1
+  currentUsers: 0
   occupiedSlot: {fileID: 0}
   AIs: []
+  type: 3
 --- !u!1 &7310074454755469947
 GameObject:
   m_ObjectHideFlags: 0
@@ -125,10 +131,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2496651035563641952}
-  - component: {fileID: 1076800778013400900}
-  m_Layer: 0
+  - component: {fileID: 2571209116346450740}
+  m_Layer: 3
   m_Name: TV
-  m_TagString: Untagged
+  m_TagString: Selectable/Object
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -151,20 +157,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1076800778013400900
-MonoBehaviour:
+--- !u!65 &2571209116346450740
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7310074454755469947}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db9fc2f0f05e75f4eb48a0d567ab0a36, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  occupiedSlot: {fileID: 0}
-  AIs: []
+  serializedVersion: 2
+  m_Size: {x: 2.28, y: 2.28, z: 1.15}
+  m_Center: {x: 0, y: 1.12, z: 0}
 --- !u!1001 &5338181222946820595
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -175,6 +180,14 @@ PrefabInstance:
     - target: {fileID: 1000011553860684, guid: 7841159c855bb0d44bcc9f1f89548d64, type: 3}
       propertyPath: m_Name
       value: TV
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000011553860684, guid: 7841159c855bb0d44bcc9f1f89548d64, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000011553860684, guid: 7841159c855bb0d44bcc9f1f89548d64, type: 3}
+      propertyPath: m_TagString
+      value: Placeable
       objectReference: {fileID: 0}
     - target: {fileID: 4000010920743216, guid: 7841159c855bb0d44bcc9f1f89548d64, type: 3}
       propertyPath: m_RootOrder
@@ -237,6 +250,14 @@ PrefabInstance:
     - target: {fileID: 1000011182921886, guid: f266cbc0b1e72924f909c3ea2b746949, type: 3}
       propertyPath: m_Name
       value: TVTable
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000011182921886, guid: f266cbc0b1e72924f909c3ea2b746949, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000011182921886, guid: f266cbc0b1e72924f909c3ea2b746949, type: 3}
+      propertyPath: m_TagString
+      value: Placeable
       objectReference: {fileID: 0}
     - target: {fileID: 1000011182921886, guid: f266cbc0b1e72924f909c3ea2b746949, type: 3}
       propertyPath: m_NavMeshLayer

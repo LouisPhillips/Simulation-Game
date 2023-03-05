@@ -13,6 +13,11 @@ public class BuildWalls : MonoBehaviour
 
     private bool wallClicked;
 
+    private GlobalDoings globalDoings;
+    private void Awake()
+    {
+        globalDoings = GameObject.FindGameObjectWithTag("GameController").GetComponent<GlobalDoings>();
+    }
     public void WallClicked()
     {
         wallClicked = true;
@@ -64,7 +69,8 @@ public class BuildWalls : MonoBehaviour
     {
         Vector3 current = WorldPoint();
         current = SnapPoint(current);
-        current = new Vector3(current.x, current.y + 0.3f, current.z); 
+        // sets positions of newly created walls
+        current = new Vector3(current.x, current.y + 0.3f, lastWallFound.transform.position.z); 
         if (!current.Equals(lastWallFound.transform.position))
         {
             AdjustWall(current);
@@ -76,6 +82,7 @@ public class BuildWalls : MonoBehaviour
         GameObject newWall = Instantiate(wallFoundationPrefab, current, Quaternion.identity);
         Vector3 middle = Vector3.Lerp(newWall.transform.position, lastWallFound.transform.position, 0.5f);
         GameObject newMidWall = Instantiate(wallPrefab, middle, Quaternion.identity);
+        GlobalValues.money -= 10;
         newMidWall.transform.LookAt(lastWallFound.transform);
         lastWallFound = newWall;
     }

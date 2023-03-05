@@ -6,10 +6,10 @@ using UnityEngine.UI;
 public class ChangeValue : MonoBehaviour
 {
     public Slider slider;
-    public enum State { Hunger, Thrist, Entertainment, Sleep};
+    public enum State { Hunger, Thrist, Entertainment, Sleep, Social};
     public State state;
     public Person person;
-    public SelectedPerson selectedPerson;
+    public SelectedInScene selectedPerson;
 
     private void Start()
     {
@@ -19,7 +19,7 @@ public class ChangeValue : MonoBehaviour
     }
     public void ChangeSliderValue()
     {
-        selectedPerson = GameObject.FindGameObjectWithTag("GameController").GetComponent<SelectedPerson>();
+        selectedPerson = GameObject.FindGameObjectWithTag("GameController").GetComponent<SelectedInScene>();
         person = selectedPerson.selectedAI;
 
         switch (state)
@@ -35,6 +35,9 @@ public class ChangeValue : MonoBehaviour
                 break;
             case State.Sleep:
                 slider.value = person.tiredness;
+                break;
+            case State.Social:
+                slider.value = person.social;
                 break;
         }
     }

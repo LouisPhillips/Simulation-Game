@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class UISwitch : MonoBehaviour
 {
     public GameObject editorMenu;
     public GameObject normalUI;
     public GameObject jobCard;
+    public GameObject queueUI;
 
     public enum State { editor, normal, job };
     public State state = State.normal;
@@ -14,10 +15,12 @@ public class UISwitch : MonoBehaviour
     private bool goToNormal = true;
 
     private TimeScaler ts;
+    private GlobalDoings globalDoings;
 
     private void Start()
     {
         ts = GetComponent<TimeScaler>();
+        globalDoings = GetComponent<GlobalDoings>();
     }
     void Update()
     {
@@ -29,8 +32,11 @@ public class UISwitch : MonoBehaviour
                     ts.timeScale = 1f;
                     goToNormal = false;
                 }
+                globalDoings.destroying = false;
                 editorMenu.SetActive(false);
                 jobCard.SetActive(false);
+                editorMenu.GetComponentInChildren<DestroyObjects>().clickIndex = 0;
+                Destroy(editorMenu.GetComponentInChildren<BuildWallsV2>().wallPoint);
                 normalUI.SetActive(true);
                 break;
             case State.editor:
@@ -38,6 +44,7 @@ public class UISwitch : MonoBehaviour
                 goToNormal = true;
                 editorMenu.SetActive(true);
                 jobCard.SetActive(false);
+                //queueUI.SetActive(false);
                 normalUI.SetActive(false);
                 break;
             case State.job:
@@ -45,6 +52,7 @@ public class UISwitch : MonoBehaviour
                 goToNormal = true;
                 editorMenu.SetActive(false);
                 jobCard.SetActive(true);
+                //queueUI.SetActive(false);
                 normalUI.SetActive(false);
                 break;
 
@@ -55,7 +63,7 @@ public class UISwitch : MonoBehaviour
         {
             state = State.editor;
         }
-        else if (Input.GetKeyDown(KeyCode.Escape) && state == State.editor)
+        else if (Input.GetKeyDown(KeyCode.Escape) && state == State.editor && !globalDoings.placing)
         {
             state = State.normal;
         }

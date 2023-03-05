@@ -11,19 +11,19 @@ public class AddToList : MonoBehaviour
 
         if (transform.tag == "Food")
         {
-            locations.foodLocations.Add(gameObject);
+            locations.unocFoodLocations.Add(gameObject);
         }
         else if (transform.tag == "Drink")
         {
-            locations.drinkingLocations.Add(gameObject);
+            locations.unocDrinkingLocations.Add(gameObject);
         }
         else if (transform.tag == "Sleep")
         {
-            locations.sleepLocations.Add(gameObject);
+            locations.unocSleepLocations.Add(gameObject);
         }
         else if (transform.tag == "Entertainment")
         {
-            locations.entertainmentLocations.Add(gameObject);
+            locations.unocEntertainmentLocations.Add(gameObject);
         }
 
     }

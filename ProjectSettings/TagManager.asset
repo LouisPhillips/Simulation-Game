@@ -9,11 +9,15 @@ TagManager:
   - Sleep
   - Entertainment
   - AI
+  - Placeable
+  - Work
+  - Selectable/AI
+  - Selectable/Object
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Placeable
   - Water
   - UI
   - 

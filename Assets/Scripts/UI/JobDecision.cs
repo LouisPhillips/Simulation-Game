@@ -10,14 +10,14 @@ public class JobDecision : MonoBehaviour
 
     private GameObject gm;
     private UISwitch ui;
-    private SelectedPerson person;
+    private SelectedInScene person;
     public GenerateJob job;
 
     private void Awake()
     {
         gm = GameObject.FindGameObjectWithTag("GameController");
         ui = gm.GetComponent<UISwitch>();
-        person = gm.GetComponent<SelectedPerson>();
+        person = gm.GetComponent<SelectedInScene>();
     }
     public void AcceptJob()
     {

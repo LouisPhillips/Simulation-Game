@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class IsVisible : MonoBehaviour
 {
-    private SelectedPerson selectedPerson;
+    private SelectedInScene selectedPerson;
     public GameObject lookForJob;
     void Start()
     {
-        selectedPerson = GameObject.FindGameObjectWithTag("GameController").GetComponent<SelectedPerson>();
+        selectedPerson = GameObject.FindGameObjectWithTag("GameController").GetComponent<SelectedInScene>();
     }
 
     // Update is called once per frame

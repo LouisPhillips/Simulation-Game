@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 995921747554209426}
   - component: {fileID: 5238008115878700349}
   - component: {fileID: 1503339768263614520}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Location
   m_TagString: Food
   m_Icon: {fileID: 0}
@@ -71,8 +71,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db9fc2f0f05e75f4eb48a0d567ab0a36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxUsers: 1
+  currentUsers: 0
   occupiedSlot: {fileID: 0}
   AIs: []
+  type: 1
 --- !u!1 &8861965144362945412
 GameObject:
   m_ObjectHideFlags: 0
@@ -82,9 +85,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7571497978071241840}
-  m_Layer: 0
+  - component: {fileID: 5381759216376676927}
+  m_Layer: 3
   m_Name: Fridge
-  m_TagString: Untagged
+  m_TagString: Selectable/Object
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -104,6 +108,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &5381759216376676927
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8861965144362945412}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.4, y: 2.5, z: 1}
+  m_Center: {x: 0, y: 1.81, z: 0}
 --- !u!1001 &5003241248526950770
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -114,6 +131,14 @@ PrefabInstance:
     - target: {fileID: 1000010642358986, guid: 3dcb1df6c82dde44f9dac4ef0ed2b1f4, type: 3}
       propertyPath: m_Name
       value: Refrigerator
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000010642358986, guid: 3dcb1df6c82dde44f9dac4ef0ed2b1f4, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000010642358986, guid: 3dcb1df6c82dde44f9dac4ef0ed2b1f4, type: 3}
+      propertyPath: m_TagString
+      value: Placeable
       objectReference: {fileID: 0}
     - target: {fileID: 1000010642358986, guid: 3dcb1df6c82dde44f9dac4ef0ed2b1f4, type: 3}
       propertyPath: m_NavMeshLayer
@@ -133,7 +158,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4000011797276446, guid: 3dcb1df6c82dde44f9dac4ef0ed2b1f4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.327
+      value: 1.827
       objectReference: {fileID: 0}
     - target: {fileID: 4000011797276446, guid: 3dcb1df6c82dde44f9dac4ef0ed2b1f4, type: 3}
       propertyPath: m_LocalPosition.z

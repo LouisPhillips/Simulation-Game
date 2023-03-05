@@ -20,8 +20,8 @@ public class CameraMovement : MonoBehaviour
 
     public float targetMovementSpeed = 10f;
 
-    private Vector3 dragOrigin;
     private UISwitch ui;
+
     private void Start()
     {
         ui = GameObject.FindGameObjectWithTag("GameController").GetComponent<UISwitch>();
@@ -32,34 +32,17 @@ public class CameraMovement : MonoBehaviour
 
         if (target)
         {
-            if (Input.GetMouseButton(1))
+            float rotateDirection = 0f;
+            if (Input.GetKey(KeyCode.Q))
             {
-                Debug.Log("rmb");
-
-                //x -= Input.mousePosition.normalized.x * xSpeed * 0.02f;
-                //y += Input.mousePosition.normalized.y * ySpeed * 0.02f;
-                if (Input.mousePosition.x < Screen.currentResolution.width / 2)
-                {
-                    x += 0.3f * xSpeed * 0.02f;
-                }
-                if (Input.mousePosition.x > Screen.currentResolution.width / 2)
-                {
-                    x -= 0.3f * xSpeed * 0.02f;
-                }
-
-                if (Input.mousePosition.y < Screen.currentResolution.height / 2)
-                {
-                    y -= 0.3f * ySpeed * 0.02f;
-                }
-                if (Input.mousePosition.y > Screen.currentResolution.height / 2)
-                {
-                    y += 0.3f * ySpeed * 0.02f;
-                }
-
-
-
-                Debug.Log(Input.mousePosition.normalized.x + "  " + Input.mousePosition.x + 300);
+                rotateDirection = +1f;
             }
+            if (Input.GetKey(KeyCode.E))
+            {
+                rotateDirection = -1f;
+            }
+            float rotateSpeed = 300f;
+            transform.RotateAround(target.transform.position, target.transform.up, rotateDirection * rotateSpeed * Time.deltaTime) ;
 
 
             Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
@@ -68,7 +51,7 @@ public class CameraMovement : MonoBehaviour
             target.transform.position = new Vector3(target.transform.position.x, -3.794175f, target.transform.position.z);
             //target.transform.position += movement * targetMovementSpeed * Time.deltaTime;
 
-            if(Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
+            if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
             {
                 target.transform.parent = null;
             }
@@ -91,7 +74,7 @@ public class CameraMovement : MonoBehaviour
             Quaternion rotation = Quaternion.Euler(y, x, 0.0f);
             Vector3 position = rotation * new Vector3(0.0f, 0.0f, -distance) + target.position;
 
-            transform.rotation = rotation;
+           // transform.rotation = rotation;
             transform.position = position;
 
             target.rotation = transform.rotation;

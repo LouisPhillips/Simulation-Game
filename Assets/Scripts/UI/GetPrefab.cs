@@ -12,15 +12,19 @@ public class GetPrefab : MonoBehaviour
     private bool clicked = false;
     private float mouseWheelRotation;
 
+    private GlobalDoings globalDoings;
+
     private void Awake()
     {
         gridSize = new Vector3(1, 1, 1);
+        globalDoings = GameObject.FindGameObjectWithTag("GameController").GetComponent<GlobalDoings>();
     }
     public void CheckPrice()
     {
         if (cost <= GlobalValues.money)
         {
             Debug.Log("can buy");
+            globalDoings.destroying = false;
             clicked = true;
         }
         else
@@ -33,6 +37,7 @@ public class GetPrefab : MonoBehaviour
     {
         if (clicked)
         {
+            globalDoings.placing = true;
             HandleNewObject();
 
             if (currentPlaceable != null)
@@ -40,6 +45,13 @@ public class GetPrefab : MonoBehaviour
                 MoveToMouse();
                 Rotate();
                 ReleaseOnClick();
+                if (Input.GetKeyDown(KeyCode.Escape) && globalDoings.placing)
+                {
+                    Destroy(currentPlaceable);
+                    currentPlaceable = null;
+                    clicked = false;
+                    globalDoings.placing = false;
+                }
             }
         }
         
@@ -86,7 +98,7 @@ public class GetPrefab : MonoBehaviour
     private void Rotate()
     {
         mouseWheelRotation += Input.mouseScrollDelta.y;
-        currentPlaceable.transform.Rotate(Vector3.up, mouseWheelRotation * 10f);
+        currentPlaceable.transform.Rotate(Vector3.up, mouseWheelRotation * 45f);
     }
 
     private void ReleaseOnClick()
@@ -94,6 +106,7 @@ public class GetPrefab : MonoBehaviour
         if(Input.GetMouseButtonDown(0))
         {
             currentPlaceable = null;
+            globalDoings.placing = false;
             clicked = false;
             GlobalValues.money -= cost;
             NavMeshBuilder.BuildNavMesh();

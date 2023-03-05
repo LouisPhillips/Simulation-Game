@@ -5,12 +5,12 @@ using UnityEngine.AI;
 
 public class BasePerson : MonoBehaviour
 {
-    public float timeScale = 0f;
     [Header("Needs")]
     public float hunger;
     public float thirst;
     public float tiredness;
     public float entertainment;
+    public float social;
 
     [Space(10)]
     [Header("Max Needs")]
@@ -18,6 +18,7 @@ public class BasePerson : MonoBehaviour
     public float maxThirst;
     public float maxTiredness;
     public float maxEntertained;
+    public float maxSocial;
 
     [Space(10)]
     [Header("Satisfied Values")]
@@ -25,6 +26,7 @@ public class BasePerson : MonoBehaviour
     public float satisfiedThirst;
     public float satisfiedTiredness;
     public float satisfiedEntertainment;
+    public float satisfiedSocial;
 
     [Space(10)]
     [Header("Critical Values")]
@@ -32,6 +34,15 @@ public class BasePerson : MonoBehaviour
     public float criticalThirst;
     public float criticalTiredness;
     public float criticalEntertainment;
+    public float criticalSocial;
+
+    [Space(10)]
+    [Header("InteractionTime")]
+    public float hungerInteractionTime;
+    public float thirstInteractionTime;
+    public float sleepInteractionTime;
+    public float entertainmentInteractionTime;
+    public float socialInteractionTime;
 
     [Space(10)]
     [Header("Components")]
@@ -57,9 +68,12 @@ public class BasePerson : MonoBehaviour
     public List<float> friendScore;
     public GameObject socializingWith;
 
-    public enum State { Idle, FindFood, FindDrink, FindSleep, FindEntertainment, Wander, Eating, Drinking, Sleeping, Entertaining, GoToWork, Work, GoBeSocial, Socialize };
+    public enum State { Idle, Wander, Eating, Drinking, Sleeping, Entertaining, Work, GoBeSocial, Socialize };
     public State state;
-
+    public State previousState;
+    public List<State> queueState;
+    public bool[] addedToQueue;
+    protected bool performing;
     public enum Gender { Male, Female };
     public Gender gender;
 
@@ -74,10 +88,9 @@ public class BasePerson : MonoBehaviour
     protected float wanderEvery = 5f;
 
     protected float eatTimer = 0f;
-    protected float eatMax = 2f;
-
     protected float drinkTimer = 0f;
-    protected float drinkMax = 3f;
+    protected float entertainmentTimer = 0f;
+    protected float sleepTimer = 0f;
 
     protected bool awake = true;
     protected bool decisionMade = false;
@@ -86,13 +99,16 @@ public class BasePerson : MonoBehaviour
     protected int agedDay = 0;
     [SerializeField] protected bool canMakeDecision = true;
 
-    public List<State> queueState;
+
+    //public Queue queueTasks;
     public virtual void Start()
     {
+        //queueTasks = new Queue();
         rb = GetComponent<Rigidbody>();
         navigation = GetComponent<NavMeshAgent>();
 
         state = State.Wander;
+        previousState = State.Wander;
         gender = Random.value < 0.5f ? Gender.Male : Gender.Female;
         employment = Employment.Unemployed;
         age = Age.Young_Adult;
@@ -101,6 +117,7 @@ public class BasePerson : MonoBehaviour
         thirst = maxThirst;
         tiredness = maxTiredness;
         entertainment = maxEntertained;
+        social = maxSocial;
 
         gameManager = GameObject.FindGameObjectWithTag("GameController");
         gl = gameManager.GetComponent<GlobalLocations>();
@@ -109,11 +126,21 @@ public class BasePerson : MonoBehaviour
         foreach (GameObject obj in GameObject.FindGameObjectsWithTag("AI"))
         {
             friends.Add(obj);
-            friendScore.Add(GameObject.FindGameObjectsWithTag("AI").Length - 1);
+            friendScore.Add(GameObject.FindGameObjectsWithTag("AI").Length);
             friends.Remove(gameObject);
         }
+        friendScore.RemoveAt(0);
+        for (int i = 0; i < friends.Count; i++)
+        {
+            friendScore[i] = 0;
+        }
+
+
+        addedToQueue = new bool[6];
 
         queueState.Add(State.Wander);
+
+        //queueTasks.Enqueue(State.Wander);
     }
 
 
@@ -124,38 +151,23 @@ public class BasePerson : MonoBehaviour
             case State.Idle:
                 Idle();
                 break;
-            case State.FindDrink:
-                GoTo(gl.drinkingLocations, 7);
-                break;
-            case State.FindFood:
-                GoTo(gl.foodLocations, 6);
-                break;
-            case State.FindSleep:
-                GoTo(gl.sleepLocations, 8);
-                break;
-            case State.FindEntertainment:
-                GoTo(gl.entertainmentLocations, 9);
-                break;
-            case State.GoToWork:
-                GoTo(gl.doorLocation, 11);
-                break;
             case State.Wander:
                 Wander();
                 break;
             case State.Eating:
-                Eat(GetClosest(gl.foodLocations).GetComponent<FoodBites>());
+                GoTo(gl.unocFoodLocations, gl.ocFoodLocations);
                 break;
             case State.Drinking:
-                Drink();
+                GoTo(gl.unocDrinkingLocations, gl.ocDrinkingLocations);
                 break;
             case State.Sleeping:
-                Sleep();
+                GoTo(gl.unocSleepLocations, gl.ocSleepLocations);
                 break;
             case State.Entertaining:
-                Entertain();
+                GoTo(gl.unocEntertainmentLocations, gl.ocEntertainmentLocations);
                 break;
             case State.Work:
-                Work();
+                GoTo(gl.doorLocation, gl.doorLocation);
                 break;
             case State.GoBeSocial:
                 FindDesiredFriend();
@@ -183,152 +195,274 @@ public class BasePerson : MonoBehaviour
         DeteriateHunger();
         DeteriateThirst();
         DeteriateEntertainment();
+        DeteriateSocial();
 
         CheckDeath();
 
         AgePerson();
 
+        if (!decisionMade)
+        {
+            state = queueState[0];
+        }
+
+    }
+    public State GetTasks(IEnumerable queue)
+    {
+        foreach (State q_state in queue)
+        {
+            state = q_state;
+        }
+        return state;
     }
 
     public void Decision()
     {
-        //state = queueState[0];
-
-        bool currentlyEating = state == State.FindFood;
-        bool currentlyDrinking = state == State.FindDrink;
-        bool currentlySleeping = state == State.FindSleep;
-        bool currentlyEntertaining = state == State.FindEntertainment;
+        bool currentlyEating = state == State.Eating;
+        bool currentlyDrinking = state == State.Drinking;
+        bool currentlySleeping = state == State.Sleeping;
+        bool currentlyEntertaining = state == State.Entertaining;
         bool currentlyWorking = state == State.Work;
+        bool currentlySocializing = state == State.Socialize;
 
-        if (!decisionMade)
+
+
+        if (jobStartTime == ts.hour && !currentlyWorking || ts.hour == jobStartTime + 1)
         {
-            if (tiredness > maxTiredness / 3 && !currentlySleeping)
+            if (employment == Employment.Employed)
             {
-                if (jobStartTime == ts.hour && !currentlyWorking || ts.hour == jobStartTime + 1)
+                if (!addedToQueue[1])
                 {
-                    if (employment == Employment.Employed)
-                    {
-                        canMakeDecision = false;
-                        state = State.GoToWork;
-                        //queueState.Add(State.GoToWork);
+                    queueState.Add(State.Work);
+                    addedToQueue[1] = true;
+                }
 
-                    }
-                }
-                else if (satisfiedHunger > hunger && !currentlyEating || hunger < criticalHunger)
+
+            }
+        }
+        else if (satisfiedHunger > hunger && !currentlyEating || hunger < criticalHunger)
+        {
+            if (gl.unocFoodLocations.Count > 0)
+            {
+                if (!addedToQueue[2])
                 {
-                    if (gl.foodLocations.Count > 0)
-                    {
-                        //queueState.Add(State.FindFood);
-                        state = State.FindFood;
-                    }
+                    queueState.Add(State.Eating);
+                    addedToQueue[2] = true;
                 }
-                else if (satisfiedThirst > thirst && !currentlyDrinking || thirst < criticalThirst)
+
+            }
+        }
+        else if (satisfiedThirst > thirst && !currentlyDrinking || thirst < criticalThirst)
+        {
+            if (gl.unocDrinkingLocations.Count > 0)
+            {
+                if (!addedToQueue[3])
                 {
-                    if (gl.drinkingLocations.Count > 0)
-                    {
-                        //queueState.Add(State.FindDrink);
-                        state = State.FindDrink;
-                    }
+                    queueState.Add(State.Drinking);
+                    addedToQueue[3] = true;
                 }
-                else if (satisfiedEntertainment > entertainment && !currentlyEntertaining)
+
+            }
+        }
+        else if (satisfiedEntertainment > entertainment && !currentlyEntertaining)
+        {
+            if (gl.unocEntertainmentLocations.Count > 0)
+            {
+                if (!addedToQueue[4])
                 {
-                    if (gl.entertainmentLocations.Count > 0)
-                    {
-                        //queueState.Add(State.FindEntertainment);
-                        state = State.FindEntertainment;
-                    }
+                    queueState.Add(State.Entertaining);
+                    addedToQueue[4] = true;
+                }
+
+            }
+        }
+        else if (criticalTiredness > tiredness && !currentlySleeping)
+        {
+            if (gl.unocSleepLocations.Count > 0)
+            {
+                if (!addedToQueue[0])
+                {
+                    queueState.Add(State.Sleeping);
+                    addedToQueue[0] = true;
                 }
             }
-            else
+        }
+        else if (criticalSocial > social && !currentlySocializing)
+        {
+            if (!addedToQueue[5])
             {
-                //queueState.Add(State.FindSleep);
-                state = State.FindSleep;
+                queueState.Add(State.GoBeSocial);
+                addedToQueue[5] = true;
             }
         }
     }
 
-    public void GoTo(List<GameObject> location, int desiredState)
+    public void GoTo(List<GameObject> uncoLocation, List<GameObject> ocLocation)
     {
-        decisionMade = true;
-        if (location.Count == 0)
+        if (uncoLocation.Count == 0 && GetClosest(ocLocation).GetComponent<IsOccupied>().occupiedSlot != gameObject && !queueState.Contains(State.Wander))
         {
-            state = State.Wander;
+            queueState.Insert(0, State.Wander);
+        }
+
+
+        if (uncoLocation.Count > 0)
+        {
+            if (GetClosest(uncoLocation).GetComponent<IsOccupied>().occupiedSlot == null)
+            {
+                GetClosest(uncoLocation).GetComponent<IsOccupied>().occupiedSlot = gameObject;
+                GetClosest(uncoLocation).GetComponent<IsOccupied>().AddOcuppied();
+            }
+        }
+
+
+
+        if (GetClosest(ocLocation).GetComponent<IsOccupied>().occupiedSlot == gameObject)
+        {
+            Debug.Log(Vector3.Distance(transform.position, navigation.destination));
+            navigation.destination = GetClosest(ocLocation).position;
+            if (Vector3.Distance(transform.position, navigation.destination) <= 1.1f)
+            {
+                Debug.Log("Here");
+                switch (state)
+                {
+                    case State.Eating:
+                        Eat(GetClosest(ocLocation).GetComponent<FoodBites>(), ocLocation);
+                        break;
+                    case State.Drinking:
+                        Drink(ocLocation);
+                        break;
+                    case State.Entertaining:
+                        Entertain(ocLocation);
+                        break;
+                    case State.Sleeping:
+                        Sleep(ocLocation);
+                        break;
+                    case State.Work:
+                        Work();
+                        break;
+                }
+            }
+        }
+
+    }
+
+    public void Eat(FoodBites food, List<GameObject> location)
+    {
+        eatTimer += Time.deltaTime;
+        if (eatTimer < hungerInteractionTime)
+        {
+            hunger += 6f * Time.deltaTime;
         }
         else
         {
-            navigation.destination = GetClosest(location).position;
-            if (Vector3.Distance(transform.position, navigation.destination) == 1f)
-            {
-                state = (State)desiredState;
-                queueState.RemoveAt(0);
-                queueState.Add((State)desiredState);
-            }
-        }
-    }
-
-    public void Eat(FoodBites food)
-    {
-        eatTimer += Time.deltaTime;
-        if (eatTimer > eatMax)
-        {
-            hunger += food.foodValue;
             eatTimer = 0;
+            decisionMade = false;
+            addedToQueue[2] = false;
+            GetClosest(location).GetComponent<IsOccupied>().RemoveOccupied();
+            if (queueState.Count > 1)
+            {
+                queueState.RemoveAt(0);
+            }
+            else
+            {
+                queueState.Add(State.Wander);
+                queueState.RemoveAt(0);
+            }
         }
 
         if (hunger > maxHunger)
         {
             hunger = maxHunger;
         }
-
-        if (hunger > satisfiedHunger)
-        {
-            //queueState.RemoveAt(0);
-            state = State.Wander;
-        }
-
     }
 
-    public void Drink()
+    public void Drink(List<GameObject> location)
     {
         drinkTimer += Time.deltaTime;
-        if (drinkTimer > drinkMax)
+        if (drinkTimer < thirstInteractionTime)
         {
-            thirst += 10f;
-            drinkTimer = 0;
+            thirst += 6f * Time.deltaTime;
+        }
+        else
+        {
+            drinkTimer = 0f;
+            decisionMade = false;
+            addedToQueue[3] = false;
+            GetClosest(location).GetComponent<IsOccupied>().RemoveOccupied();
+            if (queueState.Count > 1)
+            {
+                queueState.RemoveAt(0);
+            }
+            else
+            {
+                queueState.Add(State.Wander);
+                queueState.RemoveAt(0);
+            }
         }
 
         if (thirst > maxThirst)
         {
             thirst = maxThirst;
         }
-
-        if (thirst > satisfiedThirst)
-        {
-            state = State.Wander;
-            //queueState.RemoveAt(0);
-        }
     }
 
-    public void Entertain()
+    public void Entertain(List<GameObject> location)
     {
-        entertainment += 3f * Time.deltaTime;
-
-        if (entertainment > satisfiedEntertainment)
+        entertainmentTimer += Time.deltaTime;
+        if (entertainmentTimer < entertainmentInteractionTime)
         {
-            //queueState.RemoveAt(0);
-            state = State.Wander;
+            entertainment += 2f * Time.deltaTime;
+        }
+        else
+        {
+            entertainmentTimer = 0f;
+            decisionMade = false;
+            addedToQueue[4] = false;
+            GetClosest(location).GetComponent<IsOccupied>().RemoveOccupied();
+            if (queueState.Count > 1)
+            {
+                queueState.RemoveAt(0);
+            }
+            else
+            {
+                queueState.Add(State.Wander);
+                queueState.RemoveAt(0);
+            }
+        }
+
+        if (entertainment > maxEntertained)
+        {
+            entertainment = maxEntertained;
         }
     }
 
-    public void Sleep()
+    public void Sleep(List<GameObject> location)
     {
         awake = false;
-        tiredness += 1f * Time.deltaTime;
-
-        if (tiredness > satisfiedTiredness)
+        if (tiredness < sleepInteractionTime)
         {
-            //queueState.RemoveAt(0);
-            state = State.Wander;
+            tiredness += 1f * Time.deltaTime;
+        }
+        else
+        {
+            sleepTimer = 0f;
+            decisionMade = false;
+            addedToQueue[0] = false;
+            GetClosest(location).GetComponent<IsOccupied>().RemoveOccupied();
+            if (queueState.Count > 1)
+            {
+                queueState.RemoveAt(0);
+            }
+            else
+            {
+                queueState.Add(State.Wander);
+                queueState.RemoveAt(0);
+            }
+        }
+
+        if (tiredness > maxTiredness)
+        {
+            tiredness = maxTiredness;
         }
     }
 
@@ -338,9 +472,18 @@ public class BasePerson : MonoBehaviour
         if (jobFinishTime <= ts.hour)
         {
             GlobalValues.money = GlobalValues.money + ((jobFinishTime - jobStartTime) * paidPerHour);
-            state = State.Wander;
-            //queueState.RemoveAt(0);
-            canMakeDecision = true;
+            decisionMade = false;
+            addedToQueue[1] = false;
+
+            if (queueState.Count > 1)
+            {
+                queueState.RemoveAt(0);
+            }
+            else
+            {
+                queueState.Add(State.Wander);
+                queueState.RemoveAt(0);
+            }
         }
 
         // lunch break
@@ -353,26 +496,31 @@ public class BasePerson : MonoBehaviour
 
     public void Socialize()
     {
+        social += 3 * Time.deltaTime;
+
+        if (social > maxSocial)
+        {
+            social = maxSocial;
+        }
 
     }
 
     public void FindDesiredFriend()
     {
-        var max = friendScore[0];
-        for (int i = 1; i < friendScore.Count; i++)
+        socializingWith = friends[Random.RandomRange(0, friends.Count)];
+        navigation.destination = socializingWith.transform.position;
+
+        Debug.Log(Vector3.Distance(transform.position, navigation.destination));
+
+        if (Vector3.Distance(transform.position, navigation.destination) <= 2f)
         {
-            if (friendScore[i] > max)
-            {
-                max = friendScore[i];
-                socializingWith = friends[i];
-                Debug.Log(friends[i]);
-            }
+            navigation.destination = transform.position;
+            gameManager.GetComponent<SocialManager>().SpawnSocialZone();
         }
     }
 
     public void Wander()
     {
-        decisionMade = false;
         wanderDelay += Time.deltaTime;
         if (wanderDelay > wanderEvery)
         {
@@ -380,6 +528,27 @@ public class BasePerson : MonoBehaviour
             if (navigation.pathStatus == NavMeshPathStatus.PathComplete)
             {
                 wanderDelay = 0;
+                if (queueState.Count > 1)
+                {
+                    queueState.RemoveAt(0);
+                }
+                /*else
+                {
+                    if (Random.value > 0.5)
+                    {
+                        // could be interesting to include personalities here. Introvert would rather entertain while extrovert would rather socialise 
+                        if (Random.value > 0.2)
+                        {
+                            queueState.Add(State.Entertaining);
+                        }
+                        else
+                        {
+                            queueState.Add(State.GoBeSocial); 
+                        }
+
+                    }
+
+                }*/
             }
         }
     }
@@ -415,6 +584,15 @@ public class BasePerson : MonoBehaviour
         if (entertainment < 0)
         {
             entertainment = 0;
+        }
+    }
+
+    public void DeteriateSocial()
+    {
+        social -= decayValue * Time.deltaTime;
+        if (social < 0)
+        {
+            social = 0;
         }
     }
 

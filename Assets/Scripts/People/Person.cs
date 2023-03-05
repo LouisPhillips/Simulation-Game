@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 public class Person : BasePerson
 {
+    float time = 0;
     // Start is called before the first frame update
     public override void Start()
     {
@@ -11,16 +12,26 @@ public class Person : BasePerson
         maxHunger = 100;
         maxThirst = 100;
         maxEntertained = 100;
+        maxSocial = 100;
 
-        satisfiedTiredness = 80;
-        satisfiedHunger = 75;
-        satisfiedThirst = 75;
-        satisfiedEntertainment = 75;
+        satisfiedTiredness = 40;
+        satisfiedHunger = 70;
+        satisfiedThirst = 70;
+        satisfiedEntertainment = 50;
+        satisfiedSocial = 50;
 
-        criticalTiredness = 30;
-        criticalHunger = 25;
-        criticalThirst = 25;
+        criticalTiredness = 20;
+        criticalHunger = 20;
+        criticalThirst = 20;
         criticalEntertainment = 20;
+        criticalSocial = 20;
+
+        hungerInteractionTime = 20f;
+        thirstInteractionTime = 20f;
+        sleepInteractionTime = 100f;
+        entertainmentInteractionTime = 40f;
+        socialInteractionTime = 30f;
+
 
         base.Start();
     }

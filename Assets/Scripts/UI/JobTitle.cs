@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class JobTitle : MonoBehaviour
 {
-    public string[] jobTitles = {"Engineer" , "Cleaner" , "Taxi Driver", "Delivery Driver" };
+    public string[] jobTitles = {"Engineer" , "Cleaner" , "Taxi Driver", "Delivery Driver", "Bank Teller", "Cashier" };
     public string jobTitle;
     public void Title()
     {

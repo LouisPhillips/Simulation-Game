@@ -13,14 +13,14 @@ public class DebugScript : MonoBehaviour
     {
         for (int i = 0; i < ais.Length; i++)
         {
-            ais[i].GetComponent<Person>().hunger = 30;
+            ais[i].GetComponent<Person>().hunger = 20;
         }
     }
     public void KillThirst()
     {
         for (int i = 0; i < ais.Length; i++)
         {
-            ais[i].GetComponent<Person>().thirst = 30;
+            ais[i].GetComponent<Person>().thirst = 20;
         }
     }
 
@@ -28,7 +28,7 @@ public class DebugScript : MonoBehaviour
     {
         for (int i = 0; i < ais.Length; i++)
         {
-            ais[i].GetComponent<Person>().tiredness = 30;
+            ais[i].GetComponent<Person>().tiredness = 20;
         }
     }
 
@@ -36,7 +36,15 @@ public class DebugScript : MonoBehaviour
     {
         for (int i = 0; i < ais.Length; i++)
         {
-            ais[i].GetComponent<Person>().entertainment = 30;
+            ais[i].GetComponent<Person>().entertainment = 20;
+        }
+    }
+
+    public void KillSocial()
+    {
+        for (int i = 0; i < ais.Length; i++)
+        {
+            ais[i].GetComponent<Person>().social = 20;
         }
     }
 }
