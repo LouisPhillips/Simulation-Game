@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.AI;
 public class BuildWallsV2 : MonoBehaviour
 {
     private bool creating;
@@ -20,8 +20,11 @@ public class BuildWallsV2 : MonoBehaviour
     public GameObject wallPointPrefab;
     public GameObject wallPoint;
 
+    private TimeScaler timeScaler;
+
     private void Awake()
     {
+        timeScaler = GameObject.FindGameObjectWithTag("GameController").GetComponent<TimeScaler>();
         globalDoings = GameObject.FindGameObjectWithTag("GameController").GetComponent<GlobalDoings>();
     }
     public void WallClicked()
@@ -44,11 +47,15 @@ public class BuildWallsV2 : MonoBehaviour
         {
             SetStartPos();
             globalDoings.placing = true;
+            timeScaler.timeScale = 0.001f;
+            Time.fixedDeltaTime = 0.0001f;
         }
-        else if (Input.GetMouseButtonUp(0))
+        else if (Input.GetMouseButtonUp(0) && wall.GetComponentInChildren<CheckCollisions>().canBePlaced)
         {
             SetEndPos();
             globalDoings.placing = false;
+            timeScaler.timeScale = 0f;
+            Time.fixedDeltaTime = 1f;
         }
         else
         {
@@ -60,9 +67,21 @@ public class BuildWallsV2 : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape) && globalDoings.placing)
         {
+            creating = false;
             Destroy(wall);
             Destroy(end);
             Destroy(start);
+            wall = null;
+            end = null;
+            start = null;
+            timeScaler.timeScale = 0f;
+            Time.fixedDeltaTime = 1f;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape) && !creating)
+        {
+            globalDoings.placing = false;
+            wallClicked = false;
         }
     }
 

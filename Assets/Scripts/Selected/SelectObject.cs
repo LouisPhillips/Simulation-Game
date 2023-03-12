@@ -12,11 +12,13 @@ public class SelectObject : MonoBehaviour
     private SelectedInScene selectedAI;
     public GameObject popUpUI;
     private GlobalDoings globalDoings;
+    private UISwitch ui;
 
     private void Awake()
     {
         selectedAI = GameObject.FindGameObjectWithTag("GameController").GetComponent<SelectedInScene>();
         globalDoings = GameObject.FindGameObjectWithTag("GameController").GetComponent<GlobalDoings>();
+        ui = GameObject.FindGameObjectWithTag("GameController").GetComponent<UISwitch>();
     }
     void Update()
     {
@@ -53,7 +55,7 @@ public class SelectObject : MonoBehaviour
         }
 
         // Selection
-        if (Input.GetMouseButtonDown(0) && !globalDoings.destroying)
+        if (Input.GetMouseButtonDown(0) && !globalDoings.destroying && ui.state == UISwitch.State.normal)
         {
             if (highlight)
             {

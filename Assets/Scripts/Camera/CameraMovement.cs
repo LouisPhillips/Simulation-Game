@@ -22,6 +22,8 @@ public class CameraMovement : MonoBehaviour
 
     private UISwitch ui;
 
+    private bool rotating = false;
+
     private void Start()
     {
         ui = GameObject.FindGameObjectWithTag("GameController").GetComponent<UISwitch>();
@@ -35,14 +37,27 @@ public class CameraMovement : MonoBehaviour
             float rotateDirection = 0f;
             if (Input.GetKey(KeyCode.Q))
             {
+                rotating = true;
                 rotateDirection = +1f;
             }
-            if (Input.GetKey(KeyCode.E))
+            else if (Input.GetKey(KeyCode.E))
             {
+                rotating = true;
                 rotateDirection = -1f;
             }
-            float rotateSpeed = 300f;
-            transform.RotateAround(target.transform.position, target.transform.up, rotateDirection * rotateSpeed * Time.deltaTime) ;
+            if (!Input.GetKey(KeyCode.Q) && (!Input.GetKey(KeyCode.E)))
+            {
+                rotating = false;
+            }
+
+            float rotateSpeed = 100f;
+
+
+
+            transform.RotateAround(target.transform.position, target.transform.up, rotateDirection * rotateSpeed * Time.deltaTime);
+            transform.LookAt(target.position);
+
+
 
 
             Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
@@ -74,8 +89,12 @@ public class CameraMovement : MonoBehaviour
             Quaternion rotation = Quaternion.Euler(y, x, 0.0f);
             Vector3 position = rotation * new Vector3(0.0f, 0.0f, -distance) + target.position;
 
-           // transform.rotation = rotation;
-            transform.position = position;
+            // transform.rotation = rotation;
+            if (!rotating)
+            {
+                transform.position = position;
+            }
+
 
             target.rotation = transform.rotation;
 

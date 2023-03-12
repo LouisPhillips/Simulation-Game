@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5044265477994921662}
   - component: {fileID: 4257856846890062663}
   - component: {fileID: 7151262064501940417}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: Location
   m_TagString: Drink
   m_Icon: {fileID: 0}
@@ -71,7 +71,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2363948672415366073}
   - component: {fileID: 1438352571251717282}
-  m_Layer: 3
+  - component: {fileID: 1555169072337704252}
+  - component: {fileID: 4384401049750977300}
+  m_Layer: 2
   m_Name: Sink
   m_TagString: Selectable/Object
   m_Icon: {fileID: 0}
@@ -101,11 +103,43 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1389420095959950691}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1.12, y: 1.6, z: 4.67}
-  m_Center: {x: 0, y: 0.83, z: 0}
+  m_Center: {x: 0, y: 1.09, z: 0}
+--- !u!114 &1555169072337704252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1389420095959950691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5322719a0b0b5941b9e22b286248941, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canBePlaced: 1
+  ground:
+    serializedVersion: 2
+    m_Bits: 64
+--- !u!54 &4384401049750977300
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1389420095959950691}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &1809199066548584721
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -119,7 +153,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1000012595975274, guid: 928ab05920c2fc44dafb3573d1b5fbc1, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1000012595975274, guid: 928ab05920c2fc44dafb3573d1b5fbc1, type: 3}
       propertyPath: m_TagString
@@ -151,7 +185,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4000011771934830, guid: 928ab05920c2fc44dafb3573d1b5fbc1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.774
+      value: 1.0239999
       objectReference: {fileID: 0}
     - target: {fileID: 4000011771934830, guid: 928ab05920c2fc44dafb3573d1b5fbc1, type: 3}
       propertyPath: m_LocalPosition.z

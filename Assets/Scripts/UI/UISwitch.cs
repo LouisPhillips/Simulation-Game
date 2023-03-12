@@ -17,6 +17,7 @@ public class UISwitch : MonoBehaviour
     private TimeScaler ts;
     private GlobalDoings globalDoings;
 
+    public bool runForCheck = false;
     private void Start()
     {
         ts = GetComponent<TimeScaler>();
@@ -40,7 +41,10 @@ public class UISwitch : MonoBehaviour
                 normalUI.SetActive(true);
                 break;
             case State.editor:
-                ts.timeScale = 0;
+                if (!runForCheck)
+                {
+                    ts.timeScale = 0;
+                }
                 goToNormal = true;
                 editorMenu.SetActive(true);
                 jobCard.SetActive(false);

@@ -38,7 +38,7 @@ public class SocialArea : MonoBehaviour
                         }
                         sm.ais[i].GetComponent<Person>().queueState.Add(BasePerson.State.Socialize);
                         sm.ais[i].GetComponent<Person>().queueState.Remove(BasePerson.State.GoBeSocial);
-                        sm.ais[i].GetComponent<Person>().queueState.Insert(0, sm.ais[i].GetComponent<Person>().previousState);
+                        //sm.ais[i].GetComponent<Person>().queueState.Insert(0, sm.ais[i].GetComponent<Person>().previousState);
                         createdSocialSphere = true;
                     }
                 }
@@ -46,37 +46,38 @@ public class SocialArea : MonoBehaviour
         }
         else
         {
-            conversationTimer += Time.deltaTime;
-            if (conversationTimer > 5f)
+            for (int i = 0; i < sm.ais.Length; i++)
             {
-                for (int i = 0; i < sm.ais.Length; i++)
+                sm.ais[i].GetComponent<Person>().queueState.Remove(BasePerson.State.GoBeSocial);
+                conversationTimer += Time.deltaTime;
+                if (conversationTimer > 5f)
                 {
                     for (int j = 0; j < sm.ais[i].GetComponent<Person>().friends.Count; j++)
                     {
                         sm.ais[i].GetComponent<Person>().friendScore[j] += 1;
                     }
-                }
-
-                if (Random.value > 0.9f)
-                {
-                    for (int i = 0; i < sm.ais.Length; i++)
+                    if (Random.value > 0.7f)
                     {
+
                         if (sm.ais[i].GetComponent<Person>().queueState.Count > 1)
                         {
                             sm.ais[i].GetComponent<Person>().queueState.RemoveAt(0);
                             sm.ais[i].GetComponent<Person>().socializingWith = null;
+                            sm.ais[i].GetComponent<Person>().addedToQueue[5] = false;
                             Destroy(gameObject);
                         }
                         else
                         {
                             sm.ais[i].GetComponent<Person>().queueState.Add(BasePerson.State.Wander);
                             sm.ais[i].GetComponent<Person>().queueState.RemoveAt(0);
+                            sm.ais[i].GetComponent<Person>().addedToQueue[5] = false;
                         }
+
                     }
-                }
-                else
-                {
-                    conversationTimer = 0f;
+                    else
+                    {
+                        conversationTimer = 0f;
+                    }
                 }
             }
         }

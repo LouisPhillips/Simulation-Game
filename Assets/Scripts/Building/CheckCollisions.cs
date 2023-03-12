@@ -5,39 +5,51 @@ using UnityEngine;
 public class CheckCollisions : MonoBehaviour
 {
     public bool canBePlaced = true;
-
-    /*private void OnCollisionEnter(Collision collision)
+    RaycastHit hit;
+    public LayerMask ground;
+    public bool CheckCollision()
     {
-        Debug.Log("Can be placed");
-        if (collision.transform.tag != "Floor")
-        {
-            Debug.Log("Can be placed");
-            canBePlaced = false;
-        }
 
+        if (Physics.BoxCast(transform.position, transform.GetComponent<BoxCollider>().size, transform.forward, out hit, transform.rotation, 2f, ground))
+        {
+
+            Debug.Log("Cant be placed");
+            return false;
+
+
+        }
+        Debug.Log("Can be placed");
+        return true;
     }
 
-    private void OnCollisionExit(Collision collision)
+    public void TimeCheck()
     {
-        Debug.Log("Can be placed");
-        if (collision.transform.tag != "Floor")
-        {
-            Debug.Log("Can be placed");
-            canBePlaced = true;
-        }
+        Debug.Log("TIME CHECK");
+        Time.timeScale = 1f;
+    }
 
-    }*/
 
-    private void FixedUpdate()
+    private void OnTriggerEnter(Collider collider)
     {
-        RaycastHit hit;
-        if (Physics.BoxCast(transform.position, transform.localScale, transform.forward, out hit, transform.rotation, 5f))
+        if (collider.transform.gameObject.layer != ground)
         {
             canBePlaced = false;
         }
-        else
+    }
+
+    private void OnTriggerExit(Collider collider)
+    {
+        if (collider.transform.gameObject.layer != ground)
         {
             canBePlaced = true;
+        }
+    }
+
+    private void OnTriggerStay(Collider collider)
+    {
+        if (collider.transform.gameObject.layer != ground)
+        {
+            canBePlaced = false;
         }
     }
 }

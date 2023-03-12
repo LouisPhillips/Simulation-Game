@@ -13,11 +13,17 @@ public class GetPrefab : MonoBehaviour
     private float mouseWheelRotation;
 
     private GlobalDoings globalDoings;
+    private ToggleRaycasting toggleRaycasting;
+    private UISwitch ui;
+    private TimeScaler timeScaler;
 
     private void Awake()
     {
         gridSize = new Vector3(1, 1, 1);
         globalDoings = GameObject.FindGameObjectWithTag("GameController").GetComponent<GlobalDoings>();
+        ui = GameObject.FindGameObjectWithTag("GameController").GetComponent<UISwitch>();
+        timeScaler = GameObject.FindGameObjectWithTag("GameController").GetComponent<TimeScaler>();
+        //toggleRaycasting = GameObject.FindGameObjectWithTag("GameController").GetComponent<ToggleRaycasting>();
     }
     public void CheckPrice()
     {
@@ -39,7 +45,7 @@ public class GetPrefab : MonoBehaviour
         {
             globalDoings.placing = true;
             HandleNewObject();
-
+            //toggleRaycasting.IsIgnoringRaycast(true);
             if (currentPlaceable != null)
             {
                 MoveToMouse();
@@ -49,12 +55,13 @@ public class GetPrefab : MonoBehaviour
                 {
                     Destroy(currentPlaceable);
                     currentPlaceable = null;
+                    //toggleRaycasting.IsIgnoringRaycast(false);
                     clicked = false;
                     globalDoings.placing = false;
                 }
             }
         }
-        
+
     }
 
     private bool PressedPrefab()
@@ -103,13 +110,29 @@ public class GetPrefab : MonoBehaviour
 
     private void ReleaseOnClick()
     {
-        if(Input.GetMouseButtonDown(0))
+        timeScaler.timeScale = 0.001f;
+        Time.fixedDeltaTime = 0.0001f;
+        if (currentPlaceable.GetComponent<CheckCollisions>().canBePlaced)
         {
-            currentPlaceable = null;
-            globalDoings.placing = false;
-            clicked = false;
-            GlobalValues.money -= cost;
-            NavMeshBuilder.BuildNavMesh();
+            ui.runForCheck = true;
+            if (Input.GetMouseButtonDown(0))
+            {
+                currentPlaceable = null;
+                globalDoings.placing = false;
+                clicked = false;
+                timeScaler.timeScale = 0;
+                Time.fixedDeltaTime = 1f;
+                //toggleRaycasting.IsIgnoringRaycast(false);
+                GlobalValues.money -= cost;
+                ui.runForCheck = false;
+                NavMeshBuilder.BuildNavMesh();
+            }
+
         }
+    }
+
+    private void ChangeToWorldObject()
+    {
+
     }
 }

@@ -13,6 +13,7 @@ TagManager:
   - Work
   - Selectable/AI
   - Selectable/Object
+  - Floor
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - Placeable
   - Water
   - UI
-  - 
+  - Ground
   - 
   - 
   - 
