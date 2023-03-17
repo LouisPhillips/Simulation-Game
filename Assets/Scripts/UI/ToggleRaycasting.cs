@@ -9,38 +9,51 @@ public class ToggleRaycasting : MonoBehaviour
     public LayerMask ignoreRaycast;
     public LayerMask placeable;
     public LayerMask ui;
-    public void IsIgnoringRaycast(bool boolean)
-    {
-        GameObject[] playerRay = GameObject.FindGameObjectsWithTag("AI");
-        for (int i = 0; i < playerRay.Length; i++)
-        {
-            ignoreObjects.Add(playerRay[i]);
-        }
-        GameObject[] objectRay = GameObject.FindGameObjectsWithTag("Selectable/Object");
-        for (int i = 0; i < objectRay.Length; i++)
-        {
-            ignoreObjects.Add(objectRay[i]);
-        }
 
+    private bool added = false;
+
+    private void Update()
+    {
+
+    }
+
+    public void IsIgnoringRaycast()
+    {
+        if (!added)
+        {
+            GameObject[] playerRay = GameObject.FindGameObjectsWithTag("AI");
+            for (int i = 0; i < playerRay.Length; i++)
+            {
+                ignoreObjects.Add(playerRay[i]);
+            }
+            GameObject[] objectRay = GameObject.FindGameObjectsWithTag("Selectable/Object");
+            for (int i = 0; i < objectRay.Length; i++)
+            {
+                ignoreObjects.Add(objectRay[i]);
+            }
+
+            foreach (GameObject obj in ignoreObjects)
+            {
+                obj.layer = 2;
+                
+            }
+            added = true;
+        }
+    }
+
+    public void ResetToLayer()
+    {
         foreach (GameObject obj in ignoreObjects)
         {
-            if (boolean)
+            if (obj.transform.tag == ("AI"))
             {
-                obj.layer = ignoreRaycast;
+                obj.layer = 5;
             }
             else
             {
-                if (obj.transform.tag == ("AI"))
-                {
-                    obj.layer = ui;
-                }
-                else
-                {
-                    obj.layer = placeable;
-                }
-
+                obj.layer = 3;
             }
+            added = false;
         }
-
     }
 }

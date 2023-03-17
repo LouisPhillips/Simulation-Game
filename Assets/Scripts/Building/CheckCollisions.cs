@@ -47,9 +47,10 @@ public class CheckCollisions : MonoBehaviour
 
     private void OnTriggerStay(Collider collider)
     {
-        if (collider.transform.gameObject.layer != ground)
+        /*if (collider.transform.gameObject.layer != ground)
         {
+            Debug.Log("Cannot be placed");
             canBePlaced = false;
-        }
+        }*/
     }
 }

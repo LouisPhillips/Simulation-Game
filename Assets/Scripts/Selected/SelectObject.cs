@@ -34,7 +34,7 @@ public class SelectObject : MonoBehaviour
         {
             highlight = hit.transform.gameObject;
             //if (highlight.CompareTag ) selectable parent on actual game object and then get component in children for location
-            if (highlight.CompareTag("Selectable/AI") || highlight.CompareTag("Selectable/Object") && highlight != selection)
+            if (highlight.CompareTag("AI") || highlight.CompareTag("Selectable/Object") && highlight != selection)
             {
                 if (highlight.gameObject.GetComponent<Outline>() != null)
                 {

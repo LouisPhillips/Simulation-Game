@@ -6,6 +6,7 @@ public class GetPrefab : MonoBehaviour
 {
     public GameObject prefab;
     public float cost;
+    public LayerMask changeTo;
 
     private GameObject currentPlaceable;
     private Vector3 gridSize;
@@ -23,13 +24,12 @@ public class GetPrefab : MonoBehaviour
         globalDoings = GameObject.FindGameObjectWithTag("GameController").GetComponent<GlobalDoings>();
         ui = GameObject.FindGameObjectWithTag("GameController").GetComponent<UISwitch>();
         timeScaler = GameObject.FindGameObjectWithTag("GameController").GetComponent<TimeScaler>();
-        //toggleRaycasting = GameObject.FindGameObjectWithTag("GameController").GetComponent<ToggleRaycasting>();
+        toggleRaycasting = GameObject.FindGameObjectWithTag("GameController").GetComponent<ToggleRaycasting>();
     }
     public void CheckPrice()
     {
         if (cost <= GlobalValues.money)
         {
-            Debug.Log("can buy");
             globalDoings.destroying = false;
             clicked = true;
         }
@@ -45,7 +45,6 @@ public class GetPrefab : MonoBehaviour
         {
             globalDoings.placing = true;
             HandleNewObject();
-            //toggleRaycasting.IsIgnoringRaycast(true);
             if (currentPlaceable != null)
             {
                 MoveToMouse();
@@ -55,7 +54,7 @@ public class GetPrefab : MonoBehaviour
                 {
                     Destroy(currentPlaceable);
                     currentPlaceable = null;
-                    //toggleRaycasting.IsIgnoringRaycast(false);
+                    toggleRaycasting.ResetToLayer();
                     clicked = false;
                     globalDoings.placing = false;
                 }
@@ -81,6 +80,7 @@ public class GetPrefab : MonoBehaviour
             {
                 Destroy(currentPlaceable);
             }
+            toggleRaycasting.IsIgnoringRaycast();
             currentPlaceable = Instantiate(prefab);
         }
     }
@@ -117,12 +117,13 @@ public class GetPrefab : MonoBehaviour
             ui.runForCheck = true;
             if (Input.GetMouseButtonDown(0))
             {
+                toggleRaycasting.ignoreObjects.Add(currentPlaceable);
                 currentPlaceable = null;
                 globalDoings.placing = false;
                 clicked = false;
                 timeScaler.timeScale = 0;
                 Time.fixedDeltaTime = 1f;
-                //toggleRaycasting.IsIgnoringRaycast(false);
+                toggleRaycasting.ResetToLayer();
                 GlobalValues.money -= cost;
                 ui.runForCheck = false;
                 NavMeshBuilder.BuildNavMesh();

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
+using UnityEditor.AI;
 public class BuildWallsV2 : MonoBehaviour
 {
     private bool creating;
@@ -21,11 +21,13 @@ public class BuildWallsV2 : MonoBehaviour
     public GameObject wallPoint;
 
     private TimeScaler timeScaler;
+    private ToggleRaycasting toggleRaycasting;
 
     private void Awake()
     {
         timeScaler = GameObject.FindGameObjectWithTag("GameController").GetComponent<TimeScaler>();
         globalDoings = GameObject.FindGameObjectWithTag("GameController").GetComponent<GlobalDoings>();
+        toggleRaycasting = GameObject.FindGameObjectWithTag("GameController").GetComponent<ToggleRaycasting>();
     }
     public void WallClicked()
     {
@@ -38,6 +40,10 @@ public class BuildWallsV2 : MonoBehaviour
         {
             Marker();
             GetInput();
+            timeScaler.timeScale = 0.001f;
+            Time.fixedDeltaTime = 0.0001f;
+
+            Debug.Log(wall.GetComponentInChildren<CheckCollisions>().canBePlaced);
         }
     }
 
@@ -47,15 +53,21 @@ public class BuildWallsV2 : MonoBehaviour
         {
             SetStartPos();
             globalDoings.placing = true;
-            timeScaler.timeScale = 0.001f;
-            Time.fixedDeltaTime = 0.0001f;
+            toggleRaycasting.IsIgnoringRaycast();
         }
-        else if (Input.GetMouseButtonUp(0) && wall.GetComponentInChildren<CheckCollisions>().canBePlaced)
+
+
+        else if (Input.GetMouseButtonUp(0))
         {
-            SetEndPos();
-            globalDoings.placing = false;
-            timeScaler.timeScale = 0f;
-            Time.fixedDeltaTime = 1f;
+            if (wall.GetComponentInChildren<CheckCollisions>().canBePlaced)
+            {
+                SetEndPos();
+                globalDoings.placing = false;
+                timeScaler.timeScale = 0f;
+                Time.fixedDeltaTime = 1f;
+                toggleRaycasting.ResetToLayer();
+                NavMeshBuilder.BuildNavMesh();
+            }
         }
         else
         {
@@ -67,6 +79,7 @@ public class BuildWallsV2 : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape) && globalDoings.placing)
         {
+            toggleRaycasting.ResetToLayer();
             creating = false;
             Destroy(wall);
             Destroy(end);

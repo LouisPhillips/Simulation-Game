@@ -6,6 +6,8 @@ public class SelectedInScene : MonoBehaviour
 {
     public Camera camera;
 
+    public GameObject UICamera;
+
     public Person selectedAI;
 
     public GameObject[] allAI;
@@ -38,10 +40,11 @@ public class SelectedInScene : MonoBehaviour
                     selectedAI = hit.transform.GetComponent<Person>();
                     Camera.main.GetComponent<CameraMovement>().target.parent = selectedAI.transform;
                     Camera.main.GetComponent<CameraMovement>().target.position = selectedAI.transform.position;
-                    for (int i = 0; i < selectedAI.transform.childCount; i++)
+                  
+                    /*for (int i = 0; i < selectedAI.transform.childCount; i++)
                     {
                         selectedAI.transform.GetChild(i).gameObject.SetActive(true);
-                    }
+                    }*/
                 }
 
                 if (hit.transform.tag == ("Placeable"))
@@ -51,6 +54,9 @@ public class SelectedInScene : MonoBehaviour
 
             }
         }
+        UICamera.transform.parent = selectedAI.transform;
+        UICamera.transform.localPosition = new Vector3(0, 0, 2);
+        UICamera.transform.LookAt(selectedAI.transform);
     }
 
 

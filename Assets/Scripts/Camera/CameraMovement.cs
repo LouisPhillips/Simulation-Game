@@ -53,15 +53,8 @@ public class CameraMovement : MonoBehaviour
             float rotateSpeed = 100f;
 
 
-
-            transform.RotateAround(target.transform.position, target.transform.up, rotateDirection * rotateSpeed * Time.deltaTime);
-            transform.LookAt(target.position);
-
-
-
-
             Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-            Vector3 camMove = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles) * movement;
+            Vector3 camMove = Quaternion.Euler(transform.rotation.eulerAngles) * movement;
             target.transform.position += camMove * targetMovementSpeed * Time.deltaTime;
             target.transform.position = new Vector3(target.transform.position.x, -3.794175f, target.transform.position.z);
             //target.transform.position += movement * targetMovementSpeed * Time.deltaTime;
@@ -71,7 +64,7 @@ public class CameraMovement : MonoBehaviour
                 target.transform.parent = null;
             }
 
-            y = ClampAngle(y, yMinLimit, yMaxLimit);
+            //y = ClampAngle(y, yMinLimit, yMaxLimit);
 
             if (ui.state == UISwitch.State.normal)
             {
@@ -86,6 +79,10 @@ public class CameraMovement : MonoBehaviour
                 }
             }
 
+
+            transform.RotateAround(target.transform.position, target.transform.up, rotateDirection * rotateSpeed * Time.deltaTime);
+            transform.LookAt(target.position);
+
             Quaternion rotation = Quaternion.Euler(y, x, 0.0f);
             Vector3 position = rotation * new Vector3(0.0f, 0.0f, -distance) + target.position;
 
@@ -94,6 +91,8 @@ public class CameraMovement : MonoBehaviour
             {
                 transform.position = position;
             }
+
+
 
 
             target.rotation = transform.rotation;
