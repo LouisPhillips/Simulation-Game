@@ -23,77 +23,47 @@ public class TaskIconAssign : MonoBehaviour
 
     public void Update()
     {
-        /*for (int j = 0; j < transform.childCount; j++)
-        {
-            for (int i = 0; i < selectedAI.selectedAI.queueState.Count; i++)
-            {
-                if (selectedAI.selectedAI.queueState[i] == BasePerson.State.Wander)
-                {
-                    transform.GetChild(j).GetComponent<RawImage>().texture = wanderTexture;
-                }
-                if (selectedAI.selectedAI.queueState[i] == BasePerson.State.Eating)
-                {
-                    transform.GetChild(j).GetComponent<RawImage>().texture = foodTexture;
-                }
-                if (selectedAI.selectedAI.queueState[i] == BasePerson.State.Drinking)
-                {
-                    transform.GetChild(j).GetComponent<RawImage>().texture = drinkTexture;
-                }
-                if (selectedAI.selectedAI.queueState[i] == BasePerson.State.Sleeping)
-                {
-                    transform.GetChild(j).GetComponent<RawImage>().texture = sleepTexture;
-                }
-                if (selectedAI.selectedAI.queueState[i] == BasePerson.State.Entertaining)
-                {
-                    transform.GetChild(j).GetComponent<RawImage>().texture = entertainTexture;
-                }
-                if (selectedAI.selectedAI.queueState[i] == BasePerson.State.GoBeSocial)
-                {
-                    transform.GetChild(j).GetComponent<RawImage>().texture = goToSocialTexture;
-                }
-                if (selectedAI.selectedAI.queueState[i] == BasePerson.State.Socialize)
-                {
-                    transform.GetChild(j).GetComponent<RawImage>().texture = socialTexture;
-                }
-                if (selectedAI.selectedAI.queueState[i] == BasePerson.State.Work)
-                {
-                    transform.GetChild(j).GetComponent<RawImage>().texture = workTexture;
-                }
-            }
-        }*/
         for (int i = 0; i < transform.childCount; i++)
         {
             if (selectedAI.selectedAI.queueState[i] == BasePerson.State.Wander)
             {
                 transform.GetChild(i).GetComponent<RawImage>().texture = wanderTexture;
+                transform.GetChild(i).GetComponent<DesignatedState>().state = BasePerson.State.Wander;
             }
             if (selectedAI.selectedAI.queueState[i] == BasePerson.State.Eating)
             {
                 transform.GetChild(i).GetComponent<RawImage>().texture = foodTexture;
+                transform.GetChild(i).GetComponent<DesignatedState>().state = BasePerson.State.Eating;
             }
             if (selectedAI.selectedAI.queueState[i] == BasePerson.State.Drinking)
             {
                 transform.GetChild(i).GetComponent<RawImage>().texture = drinkTexture;
+                transform.GetChild(i).GetComponent<DesignatedState>().state = BasePerson.State.Drinking;
             }
             if (selectedAI.selectedAI.queueState[i] == BasePerson.State.Sleeping)
             {
                 transform.GetChild(i).GetComponent<RawImage>().texture = sleepTexture;
+                transform.GetChild(i).GetComponent<DesignatedState>().state = BasePerson.State.Sleeping;
             }
             if (selectedAI.selectedAI.queueState[i] == BasePerson.State.Entertaining)
             {
                 transform.GetChild(i).GetComponent<RawImage>().texture = entertainTexture;
+                transform.GetChild(i).GetComponent<DesignatedState>().state = BasePerson.State.Entertaining;
             }
             if (selectedAI.selectedAI.queueState[i] == BasePerson.State.GoBeSocial)
             {
                 transform.GetChild(i).GetComponent<RawImage>().texture = goToSocialTexture;
+                transform.GetChild(i).GetComponent<DesignatedState>().state = BasePerson.State.GoBeSocial;
             }
             if (selectedAI.selectedAI.queueState[i] == BasePerson.State.Socialize)
             {
                 transform.GetChild(i).GetComponent<RawImage>().texture = socialTexture;
+                transform.GetChild(i).GetComponent<DesignatedState>().state = BasePerson.State.Socialize;
             }
             if (selectedAI.selectedAI.queueState[i] == BasePerson.State.Work)
             {
                 transform.GetChild(i).GetComponent<RawImage>().texture = workTexture;
+                transform.GetChild(i).GetComponent<DesignatedState>().state = BasePerson.State.Work;
             }
         }
     }

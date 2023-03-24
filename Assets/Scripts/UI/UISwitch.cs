@@ -59,8 +59,6 @@ public class UISwitch : MonoBehaviour
                 //queueUI.SetActive(false);
                 normalUI.SetActive(false);
                 break;
-
-
         }
 
         if (Input.GetKeyDown(KeyCode.Escape) && state == State.normal)
@@ -70,6 +68,9 @@ public class UISwitch : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Escape) && state == State.editor && !globalDoings.placing)
         {
             state = State.normal;
+            editorMenu.GetComponentInChildren<BuildWallsV2>().wallClicked = false;
+            editorMenu.GetComponentInChildren<BuildWallsV2>().creating = false;
+            Time.fixedDeltaTime = 1f;
         }
     }
 }

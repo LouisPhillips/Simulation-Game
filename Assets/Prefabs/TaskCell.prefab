@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1438333963198283031}
   - component: {fileID: 1438333963198283030}
   - component: {fileID: 1438333963198283028}
+  - component: {fileID: -1827585465667123316}
   m_Layer: 0
   m_Name: TaskCell
   m_TagString: Untagged
@@ -117,9 +118,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: PressToRemove, Assembly-CSharp
-        m_MethodName: 
+      - m_Target: {fileID: -1827585465667123316}
+        m_TargetAssemblyTypeName: DesignatedState, Assembly-CSharp
+        m_MethodName: RemoveAtQueue
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -129,3 +130,16 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &-1827585465667123316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1438333963198283032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 200ba7403e3f48346b5daf90bb7e8a90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  state: 0

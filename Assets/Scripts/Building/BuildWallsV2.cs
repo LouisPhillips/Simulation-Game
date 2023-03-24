@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor.AI;
 public class BuildWallsV2 : MonoBehaviour
 {
-    private bool creating;
+    public bool creating;
 
     public GameObject wallPrefab;
     public GameObject cornerPrefab;
@@ -13,7 +13,7 @@ public class BuildWallsV2 : MonoBehaviour
     public GameObject end;
     public GameObject wall;
 
-    private bool wallClicked;
+    public bool wallClicked;
 
     private GlobalDoings globalDoings;
 
@@ -22,28 +22,29 @@ public class BuildWallsV2 : MonoBehaviour
 
     private TimeScaler timeScaler;
     private ToggleRaycasting toggleRaycasting;
+    private UISwitch ui;
 
     private void Awake()
     {
         timeScaler = GameObject.FindGameObjectWithTag("GameController").GetComponent<TimeScaler>();
         globalDoings = GameObject.FindGameObjectWithTag("GameController").GetComponent<GlobalDoings>();
         toggleRaycasting = GameObject.FindGameObjectWithTag("GameController").GetComponent<ToggleRaycasting>();
+        ui = GameObject.FindGameObjectWithTag("GameController").GetComponent<UISwitch>();
     }
     public void WallClicked()
     {
         wallClicked = true;
         wallPoint = (GameObject)Instantiate(wallPointPrefab, SnapPoint(WorldPoint()), Quaternion.identity);
     }
-    private void Update()
+    public void Update()
     {
         if (wallClicked)
         {
-            Marker();
-            GetInput();
             timeScaler.timeScale = 0.001f;
             Time.fixedDeltaTime = 0.0001f;
-
-            Debug.Log(wall.GetComponentInChildren<CheckCollisions>().canBePlaced);
+            Debug.Log("Times  :  " + timeScaler.timeScale + "  :  " + Time.fixedDeltaTime);
+            Marker();
+            GetInput();
         }
     }
 
@@ -51,50 +52,72 @@ public class BuildWallsV2 : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
+            toggleRaycasting.IsIgnoringRaycast();
             SetStartPos();
             globalDoings.placing = true;
-            toggleRaycasting.IsIgnoringRaycast();
+        }
+        if (creating)
+        {
+            AdjustToLength();
         }
 
 
-        else if (Input.GetMouseButtonUp(0))
+        if (wall.GetComponentInChildren<CheckCollisions>().canBePlaced)
         {
-            if (wall.GetComponentInChildren<CheckCollisions>().canBePlaced)
+            ui.runForCheck = true;
+            if (Input.GetMouseButtonUp(0))
             {
                 SetEndPos();
                 globalDoings.placing = false;
-                timeScaler.timeScale = 0f;
+                timeScaler.timeScale = 0;
                 Time.fixedDeltaTime = 1f;
+                toggleRaycasting.ignoreObjects.Add(wall);
                 toggleRaycasting.ResetToLayer();
+                ui.runForCheck = false;
                 NavMeshBuilder.BuildNavMesh();
+
             }
         }
         else
         {
-            if (creating)
+            Debug.Log("Cannot place");
+            if (Input.GetMouseButtonUp(0))
             {
-                AdjustToLength();
+                Destroy(wall);
+                Destroy(end);
+                Destroy(start);
+                wall = null;
+                end = null;
+                start = null;
+                timeScaler.timeScale = 0;
+                Time.fixedDeltaTime = 1f;
+                toggleRaycasting.ResetToLayer();
+                globalDoings.placing = false;
             }
         }
 
         if (Input.GetKeyDown(KeyCode.Escape) && globalDoings.placing)
         {
-            toggleRaycasting.ResetToLayer();
-            creating = false;
+            //creating = false;
+
             Destroy(wall);
             Destroy(end);
             Destroy(start);
             wall = null;
             end = null;
             start = null;
-            timeScaler.timeScale = 0f;
+            timeScaler.timeScale = 0;
             Time.fixedDeltaTime = 1f;
+            toggleRaycasting.ResetToLayer();
+            globalDoings.placing = false;
         }
 
         if (Input.GetKeyDown(KeyCode.Escape) && !creating)
         {
             globalDoings.placing = false;
             wallClicked = false;
+            timeScaler.timeScale = 0;
+            Time.fixedDeltaTime = 1f;
         }
     }
 

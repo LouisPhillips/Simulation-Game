@@ -112,6 +112,7 @@ public class GetPrefab : MonoBehaviour
     {
         timeScaler.timeScale = 0.001f;
         Time.fixedDeltaTime = 0.0001f;
+        Debug.Log("Updating");
         if (currentPlaceable.GetComponent<CheckCollisions>().canBePlaced)
         {
             ui.runForCheck = true;

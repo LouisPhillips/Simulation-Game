@@ -15,13 +15,13 @@ public class PressToRemove : MonoBehaviour
     {
         for (int i = 0; i < transform.childCount; i++)
         {
-            transform.GetChild(i).GetComponent<Button>().onClick.AddListener(RemoveAtIndex);
+            //transform.GetChild(i).GetComponent<Button>().onClick.AddListener(RemoveAtIndex);
         }
         
     }
     public void RemoveAtIndex()
     {
-        for (int i = 0; i < transform.childCount; i++)
+        /*for (int i = 0; i < selectedAI.selectedAI.queueState.Count; i++)
         {
             Debug.Log("Remvoed" + " " + selectedAI.selectedAI.queueState[i]);
             selectedAI.selectedAI.queueState.RemoveAt(i);
@@ -30,6 +30,6 @@ public class PressToRemove : MonoBehaviour
             {
                 selectedAI.selectedAI.queueState.Add(BasePerson.State.Wander);
             }
-        }
+        }*/
     }
 }

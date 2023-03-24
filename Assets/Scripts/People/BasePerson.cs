@@ -321,7 +321,6 @@ public class BasePerson : MonoBehaviour
 
         if (GetClosest(ocLocation).GetComponent<IsOccupied>().occupiedSlot == gameObject)
         {
-            //Debug.Log(Vector3.Distance(transform.position, navigation.destination));
             navigation.destination = GetClosest(ocLocation).position;
             if (Vector3.Distance(transform.position, navigation.destination) <= 1.1f)
             {
